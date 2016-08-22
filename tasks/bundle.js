@@ -246,7 +246,7 @@ module.exports = function(gulp) {
     });
 
     gulp.task('bundle:postBundleFilter', () => {
-      return del(postBundleFilter.concat(_pathToPkg(bundleOutputDir, _.keys(bundledPkgs))));
+      return del(postBundleFilter);
     });
 
     gulp.task('bundle:renameEntryfile', () => {
