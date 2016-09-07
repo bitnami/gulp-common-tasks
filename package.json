@@ -1,6 +1,6 @@
 {
   "name": "bitnami-gulp-common-tasks",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Common tasks used in our tools",
   "author": "Bitnami",
   "license": "GPL-2.0",
@@ -26,12 +26,12 @@
     "gulp-shell": "^0.5.2",
     "gulp-vinyl-untar": "^2.0.0",
     "lodash": "^3.10.1",
+    "mocha-teamcity-reporter": "^1.1.1",
     "run-sequence": "^1.2.1",
     "webpack-stream": "^3.2.0"
   },
   "devDependencies": {
     "eslint": "^2.13.1",
-    "eslint-config-bitnami": "bitnami/eslint-config-bitnami#v1.0.0",
-    "mocha-teamcity-reporter": "^1.1.1"
+    "eslint-config-bitnami": "bitnami/eslint-config-bitnami#v1.0.0"
   }
 }
