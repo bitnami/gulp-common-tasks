@@ -144,6 +144,7 @@ module.exports = function(gulp) {
    */
   function bundle(args) {
     const buildDir = args.buildDir;
+    const noOptional = Boolean(args.noOptional);
     const bundleOutputName = args.artifactName;
     const sources = args.sources;
     const bundledPkgs = args.bundledPkgs || null;
@@ -201,9 +202,13 @@ module.exports = function(gulp) {
                                               bundledPkgs), null, 2));
     });
 
+    let npmInstallCmd = `${npmCmd} install --production`;
+    if (noOptional) {
+      npmInstallCmd = `${npmInstallCmd} --no-optional`;
+    }
     gulp.task('bundle:installDeps', () => {
       return gulp.src('')
-        .pipe(shell(`${npmCmd} install --production`, {cwd: bundleOutputDir, quiet: true}));
+        .pipe(shell(`${npmInstallCmd}`, {cwd: bundleOutputDir, quiet: true}));
     });
 
     gulp.task('bundle:webpackize', () => {
