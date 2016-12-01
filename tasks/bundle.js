@@ -10,6 +10,25 @@ const chmod = require('gulp-chmod');
 const download = require('gulp-download');
 const shell = require('gulp-shell');
 const runSequence = require('run-sequence');
+const execSync = require('child_process').execSync;
+
+function setupHooks(gulp, hookableSteps, hooks, context) {
+  const noOpTask = _.noop;
+  const supportedHooks = {};
+  _.each(hookableSteps, s => {
+    supportedHooks[`pre:${s}`] = noOpTask;
+      supportedHooks[`post:${s}`] = noOpTask;
+  });
+  const unknownSteps = _.omit(hooks, _.keys(supportedHooks));
+  if (!_.isEmpty(unknownSteps)) {
+    throw new Error(`Unknown hooks ${_.keys(unknownSteps).join(', ')}. Supported hooks are: ${_.keys(supportedHooks).join(', ')}`);
+  }
+  _.each(supportedHooks, (defultCb, stepId) => {
+    const taskName = `bundle:${stepId}`;
+    const taskBody = _.has(hooks, stepId) ? hooks[stepId](context) : defultCb;
+    gulp.task(taskName, taskBody);
+  });
+}
 
 module.exports = function(gulp) {
   /**
@@ -136,6 +155,8 @@ module.exports = function(gulp) {
    * @param {string} [args.npmRegistry=null] - Url for the npm registry to use. If null, default registry will be used
    * @param {object} [args.runtime] - Properties of the runtime to be installed. By default it installs node 6.2.x. Set
    * to `null` to install no runtime.
+   * @param {object} [args.hooks={}] - Tasks to execute before or after built-in tasks.
+   * Currently only pre:installDeps and post:installDeps are supported
    * @param {string} [args.runtime.destDir='./runtime'] - Folder where the runtime will be stored
    * @param {string} [args.runtime.name='node'] - Name of the runtime binary to be included
    * @param {string} [args.runtime.version='6.2.1'] - Version of the node runtime to be included.
@@ -143,6 +164,7 @@ module.exports = function(gulp) {
    * (then `runtime.version` has no effect)
    */
   function bundle(args) {
+    const hookableSteps = ['installDeps'];
     const buildDir = args.buildDir;
     const noOptional = Boolean(args.noOptional);
     const bundleOutputName = args.artifactName;
@@ -150,6 +172,7 @@ module.exports = function(gulp) {
     const bundledPkgs = args.bundledPkgs || null;
     const entrypoint = args.entrypoint || 'index.js';
     const npmRegistry = args.npmRegistry || null;
+    const hooks = args.hooks || {};
     const runtime = args.runtime || {};
     if (_.isObject(runtime)) {
       _.defaults(runtime, {
@@ -172,7 +195,10 @@ module.exports = function(gulp) {
     if (npmRegistry) {
       npmCmd += `--registry ${npmRegistry} `;
     }
-
+    let npmInstallCmd = `${npmCmd} install --production`;
+    if (noOptional) {
+      npmInstallCmd = `${npmInstallCmd} --no-optional`;
+    }
     gulp.task('bundle:clean', () => {
       return del([
         bundleOutputDir,
@@ -201,11 +227,6 @@ module.exports = function(gulp) {
                               JSON.stringify(_mergeDeps(JSON.parse(fs.readFileSync('./package.json')),
                                               bundledPkgs), null, 2));
     });
-
-    let npmInstallCmd = `${npmCmd} install --production`;
-    if (noOptional) {
-      npmInstallCmd = `${npmInstallCmd} --no-optional`;
-    }
     gulp.task('bundle:installDeps', () => {
       return gulp.src('')
         .pipe(shell(`${npmInstallCmd}`, {cwd: bundleOutputDir, quiet: true}));
@@ -289,7 +310,9 @@ module.exports = function(gulp) {
         'bundle:copySources',
         'bundle:copyBundledPackages',
         'bundle:mergeDeps',
+        'bundle:pre:installDeps',
         'bundle:installDeps',
+        'bundle:post:installDeps',
         'bundle:webpackize',
         'bundle:deleteWebpackedSources',
         'bundle:postBundleFilter',
@@ -305,13 +328,24 @@ module.exports = function(gulp) {
         'bundle:clean',
         'bundle:preinstallPackages',
         'bundle:copySources',
+        'bundle:pre:installDeps',
         'bundle:installDeps',
+        'bundle:post:installDeps',
         'bundle:postBundleFilter',
         'bundle:addRuntime',
         'bundle:addLicense',
         'bundle:compress'
       );
     });
+
+    const context = {
+      npmInstall: function(args, opts) {
+        execSync(`${npmInstallCmd} ${args}`, opts);
+      },
+      bundleOutputDir,
+      buildDir
+    };
+    setupHooks(gulp, hookableSteps, hooks, context);
   }
   return bundle;
 };
