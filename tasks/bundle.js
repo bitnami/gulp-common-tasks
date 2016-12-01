@@ -17,11 +17,13 @@ function setupHooks(gulp, hookableSteps, hooks, context) {
   const supportedHooks = {};
   _.each(hookableSteps, s => {
     supportedHooks[`pre:${s}`] = noOpTask;
-      supportedHooks[`post:${s}`] = noOpTask;
+    supportedHooks[`post:${s}`] = noOpTask;
   });
   const unknownSteps = _.omit(hooks, _.keys(supportedHooks));
   if (!_.isEmpty(unknownSteps)) {
-    throw new Error(`Unknown hooks ${_.keys(unknownSteps).join(', ')}. Supported hooks are: ${_.keys(supportedHooks).join(', ')}`);
+    throw new Error(
+      `Unknown hooks ${_.keys(unknownSteps).join(', ')}. Supported hooks are: ${_.keys(supportedHooks).join(', ')}`
+    );
   }
   _.each(supportedHooks, (defultCb, stepId) => {
     const taskName = `bundle:${stepId}`;
@@ -339,8 +341,8 @@ module.exports = function(gulp) {
     });
 
     const context = {
-      npmInstall: function(args, opts) {
-        execSync(`${npmInstallCmd} ${args}`, opts);
+      npmInstall: function(npmArgs, opts) {
+        execSync(`${npmInstallCmd} ${npmArgs}`, opts);
       },
       bundleOutputDir,
       buildDir
