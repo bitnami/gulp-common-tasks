@@ -1,5 +1,3 @@
-'use strict';
-
 const fs = require('fs-extra');
 const runSequence = require('run-sequence');
 const eslint = require('gulp-eslint');
@@ -25,8 +23,8 @@ module.exports = function(gulp) {
    */
   function test(opts) {
     opts = opts || {};
-    const tests = opts.tests;
-    const sources = opts.sources;
+    const {tests} = opts;
+    const {sources} = opts;
     const reportsFolder = './artifacts/reports';
     const namespace = opts.namespace || null;
     const cwd = opts.cwd || process.cwd();

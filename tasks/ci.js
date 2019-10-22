@@ -1,5 +1,3 @@
-'use strict';
-
 const eslintTeamcity = require('eslint-teamcity');
 
 module.exports = function(gulp) {
@@ -16,7 +14,7 @@ module.exports = function(gulp) {
    * @param {object} [opts.reportsConfig] - Configuration parameters for reporters
    */
   function ci(opts) {
-    opts = Object.assign({}, opts || {});
+    opts = {...opts || {}};
     if (!opts.reportsConfig) {
       opts.reportsConfig = {
         test: 'mocha-teamcity-reporter',
@@ -26,7 +24,7 @@ module.exports = function(gulp) {
       };
     }
     const namespace = opts.namespace || null;
-    require('./test.js')(gulp)(Object.assign({}, opts, {namespace: namespace ? `${namespace}-ci` : 'ci'}));
+    require('./test.js')(gulp)({...opts, namespace: namespace ? `${namespace}-ci` : 'ci'});
   }
   return ci;
 };

@@ -1,5 +1,3 @@
-'use strict';
-
 const fs = require('fs');
 const path = require('path');
 const del = require('del');
@@ -33,11 +31,11 @@ module.exports = function(gulp) {
    */
   function npm(opts) {
     opts = opts || {};
-    const buildDir = opts.buildDir;
+    const {buildDir} = opts;
     const namespace = opts.namespace || null;
     const npmPackageOutputDir = `${buildDir}/npm-package`;
-    const sources = opts.sources;
-    const meta = opts.meta;
+    const {sources} = opts;
+    const {meta} = opts;
 
     function taskName(n) {
       return namespace ? `${namespace}-${n}` : n;
@@ -62,7 +60,8 @@ module.exports = function(gulp) {
 
     gulp.task(taskName('npm-pack:fixPackageInfo'), () => {
       return fs.writeFileSync(path.join(npmPackageOutputDir, 'package.json'), JSON.stringify(_fixPackageJsonForNpm(
-                                JSON.parse(fs.readFileSync('./package.json'))), null, 2));
+        JSON.parse(fs.readFileSync('./package.json'))
+      ), null, 2));
     });
 
     gulp.task(taskName('npm-pack'), () => {

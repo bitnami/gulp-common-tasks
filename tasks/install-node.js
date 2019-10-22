@@ -1,5 +1,3 @@
-'use strict';
-
 const download = require('gulp-download');
 const rename = require('gulp-rename');
 const chmod = require('gulp-chmod');
@@ -17,7 +15,7 @@ module.exports = function(gulp) {
    */
   function npm(opts) {
     opts = opts || {};
-    const version = opts.version;
+    const {version} = opts;
     const destination = opts.destination || './runtime';
     const namespace = opts.namespace || null;
 

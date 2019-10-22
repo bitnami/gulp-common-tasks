@@ -1,5 +1,3 @@
-'use strict';
-
 const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
@@ -10,12 +8,12 @@ const chmod = require('gulp-chmod');
 const download = require('gulp-download');
 const shell = require('gulp-shell');
 const runSequence = require('run-sequence');
-const execSync = require('child_process').execSync;
+const {execSync} = require('child_process');
 
 function setupHooks(gulp, hookableSteps, hooks, context) {
   const noOpTask = _.noop;
   const supportedHooks = {};
-  _.each(hookableSteps, s => {
+  _.each(hookableSteps, (s) => {
     supportedHooks[`pre:${s}`] = noOpTask;
     supportedHooks[`post:${s}`] = noOpTask;
   });
@@ -167,10 +165,10 @@ module.exports = function(gulp) {
    */
   function bundle(args) {
     const hookableSteps = ['installDeps'];
-    const buildDir = args.buildDir;
+    const {buildDir} = args;
     const noOptional = Boolean(args.noOptional);
     const bundleOutputName = args.artifactName;
-    const sources = args.sources;
+    const {sources} = args;
     const bundledPkgs = args.bundledPkgs || null;
     const entrypoint = args.entrypoint || 'index.js';
     const npmRegistry = args.npmRegistry || null;
@@ -189,8 +187,8 @@ module.exports = function(gulp) {
     }
     const bundleOutputDir = `${buildDir}/bundle`;
     const postBundleFilter = _relativizeGlob(bundleOutputDir, args.postBundleFilter) || [];
-    const postWebpackFilter = _relativizeGlob(bundleOutputDir, args.postWebpackFilter) ||
-                                _relativizeGlob(bundleOutputDir, args.sources);
+    const postWebpackFilter = _relativizeGlob(bundleOutputDir, args.postWebpackFilter)
+                                || _relativizeGlob(bundleOutputDir, args.sources);
 
     let npmCmd = 'npm ';
 
@@ -226,8 +224,8 @@ module.exports = function(gulp) {
 
     gulp.task('bundle:mergeDeps', () => {
       return fs.writeFileSync(path.join(bundleOutputDir, 'package.json'),
-                              JSON.stringify(_mergeDeps(JSON.parse(fs.readFileSync('./package.json')),
-                                              bundledPkgs), null, 2));
+        JSON.stringify(_mergeDeps(JSON.parse(fs.readFileSync('./package.json')),
+          bundledPkgs), null, 2));
     });
     gulp.task('bundle:installDeps', () => {
       return gulp.src('')
@@ -302,7 +300,8 @@ module.exports = function(gulp) {
         .pipe(shell(
           `mv ./bundle ./${bundleOutputName} && \
           tar czf ${bundleOutputName}.tar.gz ${bundleOutputName} && \
-          mv ./${bundleOutputName} ./bundle`, {cwd: buildDir}));
+          mv ./${bundleOutputName} ./bundle`, {cwd: buildDir}
+        ));
     });
 
     gulp.task('bundle-webpack', () => {
