@@ -19,7 +19,7 @@
     "gulp-eslint": "^6.0.0",
     "gulp-filter": "^6.0.0",
     "gulp-gunzip": "0.0.3",
-    "gulp-jscpd": "github:bitnami/gulp-jscpd",
+    "gulp-jscpd": "github:bitnami/gulp-jscpd#cec470c",
     "gulp-rename": "^1.2.2",
     "gulp-shell": "^0.7.1",
     "gulp-tap": "^0.1.3",
