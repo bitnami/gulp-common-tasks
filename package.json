@@ -1,6 +1,6 @@
 {
   "name": "bitnami-gulp-common-tasks",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Common tasks used in our tools",
   "author": "Bitnami",
   "license": "GPL-2.0",
@@ -15,11 +15,11 @@
     "fs-extra": "^8.0.0",
     "gulp-babel": "^8.0.0",
     "gulp-chmod": "^1.3.0",
-    "gulp-download": "github:bitnami/gulp-download#v0.0.1",
+    "gulp-download": "git+https://git@github.com/bitnami/gulp-download#v0.0.1",
     "gulp-eslint": "^6.0.0",
     "gulp-filter": "^6.0.0",
     "gulp-gunzip": "0.0.3",
-    "gulp-jscpd": "github:bitnami/gulp-jscpd#cec470c",
+    "gulp-jscpd": "git+https://git@github.com/bitnami/gulp-jscpd#cec470c",
     "gulp-rename": "^1.2.2",
     "gulp-shell": "^0.7.1",
     "gulp-tap": "^0.1.3",
@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "eslint": "^6.8.0",
-    "eslint-config-bitnami": "github:bitnami/eslint-config-bitnami#v2.0.0",
+    "eslint-config-bitnami": "git+https://git@github.com/bitnami/eslint-config-bitnami#v2.0.0",
     "eslint-plugin-import": "^2.20.2"
   }
 }
